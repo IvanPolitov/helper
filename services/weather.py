@@ -1,7 +1,5 @@
 import requests
-import pprint
 from typing import Any
-import json
 
 
 class WeatherOpenMeteo:

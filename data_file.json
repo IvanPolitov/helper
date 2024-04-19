@@ -1,57 +1,146 @@
 {
-    "latitude": 54.75,
-    "longitude": 55.9375,
-    "generationtime_ms": 0.0699758529663086,
-    "utc_offset_seconds": 18000,
-    "timezone": "Asia/Yekaterinburg",
-    "timezone_abbreviation": "+05",
-    "elevation": 163.0,
-    "minutely_15_units": {
-        "time": "iso8601",
-        "temperature_2m": "\u00b0C",
-        "relative_humidity_2m": "%",
-        "apparent_temperature": "\u00b0C",
-        "pressure_msl": "hPa",
-        "wind_speed_10m": "m/s",
-        "wind_direction_10m": "\u00b0",
-        "is_day": "",
-        "weather_code": "wmo code",
-        "precipitation_probability": "%",
-        "precipitation": "mm"
-    },
-    "minutely_15": {
-        "time": [
-            "2024-04-19T13:00"
-        ],
-        "temperature_2m": [
-            25.3
-        ],
-        "relative_humidity_2m": [
-            33
-        ],
-        "apparent_temperature": [
-            23.5
-        ],
-        "pressure_msl": [
-            1014.1
-        ],
-        "wind_speed_10m": [
-            4.02
-        ],
-        "wind_direction_10m": [
-            186
-        ],
-        "is_day": [
-            1
-        ],
-        "weather_code": [
-            2
-        ],
-        "precipitation_probability": [
-            0
-        ],
-        "precipitation": [
-            0.0
-        ]
-    }
+    "results": [
+        {
+            "id": 479561,
+            "name": "Ufa",
+            "latitude": 54.74306,
+            "longitude": 55.96779,
+            "elevation": 158.0,
+            "feature_code": "PPLA",
+            "country_code": "RU",
+            "admin1_id": 578853,
+            "timezone": "Asia/Yekaterinburg",
+            "population": 1033338,
+            "country_id": 2017370,
+            "country": "Russia",
+            "admin1": "Bashkortostan Republic"
+        },
+        {
+            "id": 1488659,
+            "name": "Ufa",
+            "latitude": 55.75,
+            "longitude": 60.11667,
+            "elevation": 388.0,
+            "feature_code": "PPL",
+            "country_code": "RU",
+            "admin1_id": 1508290,
+            "timezone": "Asia/Yekaterinburg",
+            "country_id": 2017370,
+            "country": "Russia",
+            "admin1": "Chelyabinsk"
+        },
+        {
+            "id": 8163690,
+            "name": "Ufa",
+            "latitude": 57.5214,
+            "longitude": 56.7834,
+            "elevation": 134.0,
+            "feature_code": "PPL",
+            "country_code": "RU",
+            "admin1_id": 511180,
+            "timezone": "Asia/Yekaterinburg",
+            "country_id": 2017370,
+            "country": "Russia",
+            "admin1": "Perm Krai"
+        },
+        {
+            "id": 8388345,
+            "name": "Ufa",
+            "latitude": -10.6673,
+            "longitude": 123.3506,
+            "elevation": 183.0,
+            "feature_code": "PPL",
+            "country_code": "ID",
+            "admin1_id": 1633791,
+            "timezone": "Asia/Makassar",
+            "country_id": 1643084,
+            "country": "Indonesia",
+            "admin1": "East Nusa Tenggara"
+        },
+        {
+            "id": 6301027,
+            "name": "Ufa International Airport",
+            "latitude": 54.56373,
+            "longitude": 55.88037,
+            "elevation": 136.0,
+            "feature_code": "AIRP",
+            "country_code": "RU",
+            "admin1_id": 578853,
+            "timezone": "Asia/Yekaterinburg",
+            "country_id": 2017370,
+            "country": "Russia",
+            "admin1": "Bashkortostan Republic"
+        },
+        {
+            "id": 12121793,
+            "name": "Ufal",
+            "latitude": 8.22257,
+            "longitude": 8.61605,
+            "elevation": 360.0,
+            "feature_code": "PPL",
+            "country_code": "NG",
+            "admin1_id": 2595348,
+            "timezone": "Africa/Lagos",
+            "country_id": 2328926,
+            "country": "Nigeria",
+            "admin1": "Nasarawa State"
+        },
+        {
+            "id": 149342,
+            "name": "Ufana",
+            "latitude": -4.25,
+            "longitude": 35.35,
+            "elevation": 1877.0,
+            "feature_code": "PPL",
+            "country_code": "TZ",
+            "admin1_id": 435764,
+            "admin2_id": 7647662,
+            "admin3_id": 11005128,
+            "timezone": "Africa/Dar_es_Salaam",
+            "country_id": 149590,
+            "country": "Tanzania",
+            "admin1": "Manyara",
+            "admin2": "Babati District",
+            "admin3": "Ufana"
+        },
+        {
+            "id": 163047,
+            "name": "\u016af\u0101n\u0101",
+            "latitude": 33.19958,
+            "longitude": 35.85935,
+            "elevation": 959.0,
+            "feature_code": "PPL",
+            "country_code": "SY",
+            "timezone": "Asia/Damascus",
+            "country_id": 163843,
+            "country": "Syria"
+        },
+        {
+            "id": 440689,
+            "name": "Ufaca",
+            "latitude": 37.8007,
+            "longitude": 41.97204,
+            "elevation": 548.0,
+            "feature_code": "PPL",
+            "country_code": "TR",
+            "timezone": "Europe/Istanbul",
+            "country_id": 298795,
+            "country": "Turkey"
+        },
+        {
+            "id": 2273387,
+            "name": "Ufaka",
+            "latitude": 4.7093,
+            "longitude": -8.22036,
+            "elevation": 46.0,
+            "feature_code": "PPL",
+            "country_code": "LR",
+            "admin1_id": 2588490,
+            "timezone": "Africa/Monrovia",
+            "country_id": 2275384,
+            "country": "Liberia",
+            "admin1": "Grand Kru County"
+        }
+    ],
+    "generationtime_ms": 0.56803226
 }
