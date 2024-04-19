@@ -5,11 +5,12 @@ from aiogram.types import Message, CallbackQuery
 from lexicon.lexicon_ru import LEXICON_COMMANDS
 from aiogram.filters import Command, CommandStart
 from keyboards.weather_kb import create_loc_kb, create_choose_loc_kb
-from services.weather import get_weather_now
+from services.weather import WeatherOpenMeteo
 from database.database import user_db, user_dict_template
 
 
 router = Router()
+weather = WeatherOpenMeteo()
 
 
 @router.message(Command(commands='help'))
@@ -44,5 +45,6 @@ async def send_place_weather(callback: CallbackQuery):
 
 @router.message(F.location)
 async def send_local_weather(message: Message):
-    qq = get_weather_now(message.location.latitude, message.location.longitude)
+    qq = weather.get_current_weather(
+        message.location.latitude, message.location.longitude)
     await message.answer(text=qq)
