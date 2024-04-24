@@ -1,5 +1,6 @@
 import requests
 from typing import Any
+import pprint
 
 
 class WeatherOpenMeteo:
@@ -114,6 +115,7 @@ class WeatherOpenMeteo:
     def get_current_weather(self, latitude: int | float, longitude: int | float) -> dict[str, Any]:
         if not (self._is_coordinates(latitude, longitude)):
             return 'Not coordinates'
+
         parameters = self.params_15m.copy()
         parameters['longitude'] = longitude
         parameters['latitude'] = latitude
@@ -142,8 +144,7 @@ class WeatherOpenMeteo:
 Ветер {wind_direction}, {wind_speed} м/с
 Давление: {pressure:.5} мм рт.ст.'''
         if precipitation_probability > 0:
-            text += f'''\nВероятность осадков: {precipitation_probability}%
-Размер осадков: {precipitation} мм'''
+            text += f'''\nВероятность осадков: {precipitation_probability}%'''
         return text
 
 

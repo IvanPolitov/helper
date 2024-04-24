@@ -1,0 +1,12 @@
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
+
+
+def create_main_window_kb() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+    weather = KeyboardButton(
+        text="Погода",
+    )
+    kb_builder.row(weather)
+    keyboard: ReplyKeyboardMarkup = kb_builder.as_markup()
+    return keyboard

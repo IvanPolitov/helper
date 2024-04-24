@@ -1,4 +1,4 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, KeyboardButtonPollType, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from lexicon.lexicon_ru import LEXICON_RU
 
@@ -32,7 +32,6 @@ def create_weather_settings_kb() -> ReplyKeyboardMarkup:
 
 def create_location_kb(args) -> InlineKeyboardMarkup:
     kb_builder = InlineKeyboardBuilder()
-    print(args)
     for button in args:
         kb_builder.row(
             InlineKeyboardButton(
@@ -68,4 +67,23 @@ def cancel_locations_kb() -> ReplyKeyboardMarkup:
     )
     kb_builder.row(cancel)
     keyboard: ReplyKeyboardMarkup = kb_builder.as_markup()
+    return keyboard
+
+
+def create_choose_forecast_kb() -> InlineKeyboardMarkup:
+    kb_builder = InlineKeyboardBuilder()
+    weather_now = InlineKeyboardButton(
+        text='Погода сейчас',
+        callback_data='weather_now',
+    )
+    daily_forecast = InlineKeyboardButton(
+        text='Прогноз на день',
+        callback_data='daily_forecast',
+    )
+    weekly_forecast = InlineKeyboardButton(
+        text='Прогноз на неделю',
+        callback_data='weekly_forecast',
+    )
+    kb_builder.row(weather_now, daily_forecast, weekly_forecast)
+    keyboard: InlineKeyboardMarkup = kb_builder.as_markup(resize_keyboard=True)
     return keyboard
