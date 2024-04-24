@@ -4,6 +4,7 @@ import asyncio
 import logging
 from handlers import other_handlers, user_handlers
 from keyboards.main_menu import set_main_menu
+from aiogram.fsm.storage.memory import MemoryStorage
 
 
 async def main() -> None:
@@ -14,10 +15,12 @@ async def main() -> None:
     )
     logging.info('Starting bot')
 
+    storage = MemoryStorage()
+
     config: Config = load_config()
     bot = Bot(token=config.tg_bot.token)
 
-    dp = Dispatcher()
+    dp = Dispatcher(storage=storage)
 
     dp.startup.register(set_main_menu)
 

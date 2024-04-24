@@ -3,26 +3,69 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from lexicon.lexicon_ru import LEXICON_RU
 
 
-def create_loc_kb(*args) -> ReplyKeyboardMarkup:
+def create_weather_settings_kb() -> ReplyKeyboardMarkup:
     kb_builder = ReplyKeyboardBuilder()
-    kb_builder.row(
-        KeyboardButton(
-            text=LEXICON_RU['get_geo_button'],
-            request_location=True,
-        )
+    locations = KeyboardButton(
+        text='Точки интереса'
     )
-    keyboard: ReplyKeyboardMarkup = kb_builder.as_markup(resize_keyboard=True)
+    daily_forecast = KeyboardButton(
+        text='Прогноз на день'
+    )
+    weekly_forecast = KeyboardButton(
+        text='Прогноз на неделю'
+    )
+    default_location = KeyboardButton(
+        text='Дефолтное место'
+    )
+    flag_default_location = KeyboardButton(
+        text='Дефолтное место или геопозиция'
+    )
+    close = KeyboardButton(
+        text='Вернуться на главный экран'
+    )
+    kb_builder.row(locations, daily_forecast, weekly_forecast,
+                   default_location, flag_default_location, close, width=1)
+
+    keyboard: ReplyKeyboardMarkup = kb_builder.as_markup()
     return keyboard
 
 
-def create_choose_loc_kb(args) -> InlineKeyboardMarkup:
+def create_location_kb(args) -> InlineKeyboardMarkup:
     kb_builder = InlineKeyboardBuilder()
+    print(args)
     for button in args:
         kb_builder.row(
             InlineKeyboardButton(
-                text=button,
-                callback_data=f'location {str(args[button][0])} {str(args[button][1])}')
+                text=f'''{button}: ({str(args[button][0])}, {
+                    str(args[button][1])})''',
+                callback_data=f'del_location {str(args[button][0])} {
+                    str(args[button][1])}'
+            )
         )
 
     keyboard: InlineKeyboardMarkup = kb_builder.as_markup(resize_keyboard=True)
+    return keyboard
+
+
+def choose_locations_kb() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+    add_locations = KeyboardButton(
+        text='Добавить'
+    )
+    del_daily_forecast = KeyboardButton(
+        text='Удалить'
+    )
+    kb_builder.row(add_locations, del_daily_forecast, width=2)
+
+    keyboard: ReplyKeyboardMarkup = kb_builder.as_markup()
+    return keyboard
+
+
+def cancel_locations_kb() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+    cancel = KeyboardButton(
+        text='Отмена'
+    )
+    kb_builder.row(cancel)
+    keyboard: ReplyKeyboardMarkup = kb_builder.as_markup()
     return keyboard

@@ -140,14 +140,13 @@ class WeatherOpenMeteo:
 
 Влажность: {relative_humidity}%
 Ветер {wind_direction}, {wind_speed} м/с
-Давление: {pressure} мм рт.ст.'''
+Давление: {pressure:.5} мм рт.ст.'''
         if precipitation_probability > 0:
-            text += f'''Вероятность осадков: {precipitation_probability}%
+            text += f'''\nВероятность осадков: {precipitation_probability}%
 Размер осадков: {precipitation} мм'''
         return text
 
 
 if __name__ == '__main__':
-
     w = WeatherOpenMeteo()
     print(w.get_current_weather(54.7431, 55.9678))

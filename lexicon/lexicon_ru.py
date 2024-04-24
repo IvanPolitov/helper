@@ -6,9 +6,9 @@ LEXICON_COMMANDS = {
 
 
 LEXICON_MENU_COMMANDS: dict[str, str] = {
-    '/start': 'Это бот-помощник.',
+    '/start': 'Обязательно нажми меня перед началом',
     '/help': 'Справка по работе бота',
-    '/weather': 'Погода сейчас',
+    '/weather_settings': 'Погодные настройки',
 }
 LEXICON_RU = {
     'get_geo_button': 'Отправить геолокацию',
