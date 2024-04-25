@@ -2,7 +2,7 @@ from aiogram import Dispatcher, Bot
 from config_data.config import Config, load_config
 import asyncio
 import logging
-from handlers import other_handlers, user_handlers
+from handlers import other_handlers, user_handlers, weather_settings_handlers
 from keyboards.main_menu import set_main_menu
 from aiogram.fsm.storage.memory import MemoryStorage
 
@@ -24,6 +24,7 @@ async def main() -> None:
 
     dp.startup.register(set_main_menu)
 
+    dp.include_router(weather_settings_handlers.router)
     dp.include_router(user_handlers.router)
     dp.include_router(other_handlers.router)
 

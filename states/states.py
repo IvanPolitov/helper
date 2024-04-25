@@ -3,5 +3,6 @@ from aiogram.fsm.state import State, StatesGroup, default_state
 
 
 class FSMWeather(StatesGroup):
-    weather_settings = State()
-    choose_locations = State()
+    weather_settings_state = State()
+    choose_locations_state = State()
+    add_loc_state = State()

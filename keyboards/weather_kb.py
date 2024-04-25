@@ -37,8 +37,7 @@ def create_location_kb(args) -> InlineKeyboardMarkup:
             InlineKeyboardButton(
                 text=f'''{button}: ({str(args[button][0])}, {
                     str(args[button][1])})''',
-                callback_data=f'del_location {str(args[button][0])} {
-                    str(args[button][1])}'
+                callback_data=f'del_location {button}'
             )
         )
 
@@ -54,13 +53,19 @@ def choose_locations_kb() -> ReplyKeyboardMarkup:
     del_daily_forecast = KeyboardButton(
         text='Удалить'
     )
-    kb_builder.row(add_locations, del_daily_forecast, width=2)
+    cancel = KeyboardButton(
+        text='Отмена'
+    )
+    look = KeyboardButton(
+        text='Посмотреть'
+    )
+    kb_builder.row(add_locations, del_daily_forecast, look, cancel)
 
     keyboard: ReplyKeyboardMarkup = kb_builder.as_markup()
     return keyboard
 
 
-def cancel_locations_kb() -> ReplyKeyboardMarkup:
+def cancel_kb() -> ReplyKeyboardMarkup:
     kb_builder = ReplyKeyboardBuilder()
     cancel = KeyboardButton(
         text='Отмена'

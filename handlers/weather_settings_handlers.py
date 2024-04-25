@@ -1,0 +1,107 @@
+'''
+Здесь будут лежать хендлеры
+для работы с настройками погоды
+'''
+from services.geocoding import Geocoding
+from services.weather import WeatherOpenMeteo
+
+from aiogram import Router, F
+from aiogram.types import Message, CallbackQuery
+from aiogram.filters import or_f, and_f, StateFilter
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, default_state
+
+from keyboards.weather_kb import choose_locations_kb, create_location_kb, cancel_kb, create_weather_settings_kb, cancel_kb
+
+from states.states import FSMWeather
+
+from database.database import user_db
+from filters.handler_filter import IsLocation, IsCity
+
+router = Router()
+weather = WeatherOpenMeteo()
+geocod = Geocoding()
+
+
+# Обработка экрана работы со списком точек интереса
+@router.message(and_f(StateFilter(FSMWeather.weather_settings_state),
+                      F.text == 'Точки интереса'))
+async def location_list(message: Message, state: FSMContext):
+    await message.answer(text='Вы можете просмотреть или удалить локацию или добавить точку интереса',
+                         reply_markup=choose_locations_kb())
+    await state.set_state(state=FSMWeather.choose_locations_state)
+
+
+# Просмотр списка
+@ router.message(StateFilter(FSMWeather.choose_locations_state), F.text == 'Посмотреть')
+async def look_list(message: Message, state: FSMContext):
+    user = user_db[message.from_user.id]['locations']
+    text = 'Список точек интереса:\n'
+    for loc, coord in user.items():
+        text += f'{str(loc)}: {str(coord)}\n'
+    await message.answer(text=text, reply_markup=choose_locations_kb())
+
+
+# Вернуться к списку настроек погоды
+@ router.message(StateFilter(FSMWeather.choose_locations_state), F.text == 'Отмена')
+async def change_weather_settings(message: Message, state: FSMContext):
+    text = 'Настройки ваших прогнозов'
+
+    await message.answer(text=text, reply_markup=create_weather_settings_kb())
+    await state.set_state(state=FSMWeather.weather_settings_state)
+
+
+# Удалить точку
+@ router.message(StateFilter(FSMWeather.choose_locations_state), F.text == 'Удалить')
+async def del_loc(message: Message, state: FSMContext):
+    text = 'Выберите точку для удаления:'
+    await message.answer(text=text,
+                         reply_markup=create_location_kb(user_db[message.from_user.id]['locations']))
+
+
+# Обработка удаления точки интереса
+@ router.callback_query(StateFilter(FSMWeather.choose_locations_state), F.data.split()[0] == 'del_location')
+async def del_loc_process(callback: CallbackQuery):
+    loc = callback.data[13:]
+    user_db[callback.from_user.id]['locations'].pop(loc)
+    await callback.message.edit_reply_markup(reply_markup=create_location_kb(user_db[callback.from_user.id]['locations']))
+
+
+# Добавить точку
+@ router.message(StateFilter(FSMWeather.choose_locations_state), F.text == 'Добавить')
+async def add_loc(message: Message, state: FSMContext):
+    text = 'Напишите название города или координаты (2 числа):'
+    await message.answer(text=text,
+                         reply_markup=cancel_kb())
+    await state.set_state(state=FSMWeather.add_loc_state)
+
+
+# Обработка добавления точки интереса (отмена)
+@ router.message(StateFilter(FSMWeather.add_loc_state), F.text == 'Отмена')
+async def add_loc_cancel_process(message: Message, state: FSMContext):
+    await message.answer(text='Вы можете просмотреть или удалить локацию или добавить точку интереса',
+                         reply_markup=choose_locations_kb())
+    await state.set_state(state=FSMWeather.choose_locations_state)
+
+
+# Если мы напишем при добавлении точки интереса
+# 2 числа, то отработает этот хэндлер и добавится точка
+@ router.message(StateFilter(FSMWeather.add_loc_state), IsLocation())
+async def add_location_list_by_coord(message: Message, state: FSMContext):
+    string = message.text.replace(',', '.')
+    latitude, longitude = tuple(map(lambda x: float(x), string.split()))
+    city = geocod.find_name(latitude, longitude)
+    user_db[message.from_user.id]['locations'][city] = (latitude, longitude,)
+    await message.answer(text=str(city) + ' добавлен', reply_markup=choose_locations_kb())
+    await state.set_state(state=FSMWeather.choose_locations_state)
+
+
+# Если мы напишем при добавлении точки интереса
+# текст, то отработает этот хэндлер и добавится точка
+@ router.message(StateFilter(FSMWeather.add_loc_state), IsCity())
+async def add_location_list_by_name(message: Message, state: FSMContext):
+    city, latitude, longitude = geocod.find_coord(message.text)
+    print(city, latitude, longitude)
+    user_db[message.from_user.id]['locations'][city] = (latitude, longitude,)
+    await message.answer(text=str(city) + ' добавлен', reply_markup=choose_locations_kb())
+    await state.set_state(state=FSMWeather.choose_locations_state)
