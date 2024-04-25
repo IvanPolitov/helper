@@ -43,9 +43,8 @@ async def call_start(message: Message, state: FSMContext):
 @router.message(Command(commands='weather_settings'))
 async def change_weather_settings(message: Message, state: FSMContext):
     text = 'Настройки ваших прогнозов'
-
     await message.answer(text=text,
-                         reply_markup=create_weather_settings_kb())
+                         reply_markup=create_weather_settings_kb(message.from_user.id))
     await state.set_state(state=FSMWeather.weather_settings_state)
 
 

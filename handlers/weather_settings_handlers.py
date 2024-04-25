@@ -47,7 +47,7 @@ async def look_list(message: Message, state: FSMContext):
 async def change_weather_settings(message: Message, state: FSMContext):
     text = 'Настройки ваших прогнозов'
 
-    await message.answer(text=text, reply_markup=create_weather_settings_kb())
+    await message.answer(text=text, reply_markup=create_weather_settings_kb(message.from_user.id))
     await state.set_state(state=FSMWeather.weather_settings_state)
 
 

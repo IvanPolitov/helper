@@ -1,24 +1,41 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from lexicon.lexicon_ru import LEXICON_RU
+from database.database import user_db
 
 
-def create_weather_settings_kb() -> ReplyKeyboardMarkup:
+def create_weather_settings_kb(user_id: int) -> ReplyKeyboardMarkup:
+    id_text = ''
+
     kb_builder = ReplyKeyboardBuilder()
     locations = KeyboardButton(
         text='Точки интереса'
     )
+
+    if user_db[user_id]['flag_daily_forecast']:
+        id_text = 'Включено'
+    else:
+        id_text = 'Отключено'
     daily_forecast = KeyboardButton(
-        text='Прогноз на день'
+        text='Прогноз на день: ' + id_text
     )
+    if user_db[user_id]['flag_weekly_forecast']:
+        id_text = 'Включено'
+    else:
+        id_text = 'Отключено'
     weekly_forecast = KeyboardButton(
-        text='Прогноз на неделю'
+        text='Прогноз на неделю: ' + id_text
     )
     default_location = KeyboardButton(
-        text='Дефолтное место'
+        text='Дефолтное место: ' + user_db[user_id]['default_location']
     )
+
+    if user_db[user_id]['flag_default_location']:
+        id_text = 'Геопозиция'
+    else:
+        id_text = 'Место'
     flag_default_location = KeyboardButton(
-        text='Дефолтное место или геопозиция'
+        text='Дефолтное место или геопозиция: ' + id_text
     )
     close = KeyboardButton(
         text='Вернуться на главный экран'
