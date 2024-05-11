@@ -72,3 +72,8 @@ async def get_weather_now(callback: CallbackQuery):
         reply_markup=callback.message.reply_markup
     )
     await callback.answer()
+
+
+@router.message(StateFilter(FSMWeather.weather_settings_state), F.text == 'Вернуться на главный экран')
+async def return_main_window(message: Message, state: FSMContext):
+    await call_start(message, state)

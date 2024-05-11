@@ -9,7 +9,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 async def main() -> None:
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format='%(filename)s:%(lineno)d #%(levelname)-8s '
                '[%(asctime)s] - %(name)s - %(message)s'
     )
