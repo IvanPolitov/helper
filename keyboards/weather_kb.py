@@ -62,6 +62,21 @@ def create_location_kb(args) -> InlineKeyboardMarkup:
     return keyboard
 
 
+def create_choose_default_location_kb(args) -> InlineKeyboardMarkup:
+    kb_builder = InlineKeyboardBuilder()
+    for button in args:
+        kb_builder.row(
+            InlineKeyboardButton(
+                text=f'''{button}: ({str(args[button][0])}, {
+                    str(args[button][1])})''',
+                callback_data=f'def_location {button}'
+            )
+        )
+
+    keyboard: InlineKeyboardMarkup = kb_builder.as_markup(resize_keyboard=True)
+    return keyboard
+
+
 def choose_locations_kb() -> ReplyKeyboardMarkup:
     kb_builder = ReplyKeyboardBuilder()
     add_locations = KeyboardButton(

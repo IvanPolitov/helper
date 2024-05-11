@@ -11,7 +11,7 @@ from aiogram.filters import or_f, and_f, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, default_state
 
-from keyboards.weather_kb import choose_locations_kb, create_location_kb, cancel_kb, create_weather_settings_kb, cancel_kb
+from keyboards.weather_kb import choose_locations_kb, create_location_kb, cancel_kb, create_weather_settings_kb, cancel_kb, create_choose_default_location_kb
 
 from states.states import FSMWeather
 
@@ -105,3 +105,56 @@ async def add_location_list_by_name(message: Message, state: FSMContext):
     user_db[message.from_user.id]['locations'][city] = (latitude, longitude,)
     await message.answer(text=str(city) + ' добавлен', reply_markup=choose_locations_kb())
     await state.set_state(state=FSMWeather.choose_locations_state)
+
+
+# Включить прогноз на день по часам в 8:00
+@ router.message(StateFilter(FSMWeather.weather_settings_state), F.text.split(": ")[0] == 'Прогноз на день')
+async def forecast_daily_active(message: Message, state: FSMContext):
+    if user_db[message.from_user.id]['flag_daily_forecast']:
+        user_db[message.from_user.id]['flag_daily_forecast'] = False
+        text = 'Прогноз на день отключен'
+    else:
+        user_db[message.from_user.id]['flag_daily_forecast'] = True
+        text = 'Прогноз на день включен'
+    await message.answer(text=text, reply_markup=create_weather_settings_kb(message.from_user.id))
+
+
+# Включить прогноз на неделю по дням в 8:00
+@ router.message(StateFilter(FSMWeather.weather_settings_state), F.text.split(": ")[0] == 'Прогноз на неделю')
+async def forecast_weekly_active(message: Message, state: FSMContext):
+    if user_db[message.from_user.id]['flag_weekly_forecast']:
+        user_db[message.from_user.id]['flag_weekly_forecast'] = False
+        text = 'Прогноз на неделю отключен'
+    else:
+        user_db[message.from_user.id]['flag_weekly_forecast'] = True
+        text = 'Прогноз на неделю включен'
+    await message.answer(text=text, reply_markup=create_weather_settings_kb(message.from_user.id))
+
+
+# Выбрать дефолтное место
+@router.message(StateFilter(FSMWeather.weather_settings_state), F.text.split(": ")[0] == 'Дефолтное место')
+async def choose_default_location(message: Message, state: FSMContext):
+    text = 'Выберите место для прогноза:'
+    await message.answer(text=text, reply_markup=create_choose_default_location_kb(user_db[message.from_user.id]['locations']))
+    await state.set_state(state=FSMWeather.choose_default_locations_state)
+
+
+# Обработка дефолтной точки
+@ router.callback_query(StateFilter(FSMWeather.choose_default_locations_state), F.data.split()[0] == 'def_location')
+async def del_loc_process(callback: CallbackQuery, state: FSMContext):
+    user_db[callback.from_user.id]['default_location'] = callback.data[13:]
+    await callback.message.answer(text='Установлено место: ' + callback.data[13:], reply_markup=create_weather_settings_kb(callback.from_user.id))
+    await callback.answer()
+    await state.set_state(state=FSMWeather.weather_settings_state)
+
+
+# Выбор места для предоставления прогнозов по требованию
+@router.message(StateFilter(FSMWeather.weather_settings_state), F.text.split(": ")[0] == 'Дефолтное место или геопозиция')
+async def choose_default_location_or_geoposition(message: Message, state: FSMContext):
+    if user_db[message.from_user.id]['flag_default_location']:
+        user_db[message.from_user.id]['flag_default_location'] = False
+        text = 'Место'
+    else:
+        user_db[message.from_user.id]['flag_default_location'] = True
+        text = 'Геопозиция'
+    await message.answer(text=text, reply_markup=create_weather_settings_kb(message.from_user.id))

@@ -31,9 +31,9 @@ async def call_help(message: Message):
 async def call_start(message: Message, state: FSMContext):
     if message.from_user.id not in user_db:
         user_db[message.from_user.id] = deepcopy(user_dict_template)
-        await message.answer(text=f'Здравствуйте, {message.from_user.first_name}. {LEXICON_COMMANDS['/start']}', reply_markup=create_main_window_kb())
+        await message.answer(text=f'Здравствуйте, {message.from_user.first_name}. {LEXICON_COMMANDS['/start']}', reply_markup=create_main_window_kb(message.from_user.id))
     else:
-        await message.answer(text=f'Добрый день, {message.from_user.first_name}.', reply_markup=create_main_window_kb())
+        await message.answer(text=f'Добрый день, {message.from_user.first_name}.', reply_markup=create_main_window_kb(message.from_user.id))
     await state.set_state(state=default_state)
 
 
@@ -51,7 +51,7 @@ async def change_weather_settings(message: Message, state: FSMContext):
 # Прогрузка главного экрана
 @router.message(StateFilter(default_state), F.text == 'Главный экран')
 async def main_window(message: Message, state: FSMContext):
-    await message.answer(text='Главный экран', reply_markup=create_main_window_kb())
+    await message.answer(text='Главный экран', reply_markup=create_main_window_kb(message.from_user.id))
 
 
 # Взаимодействие с меню прогнозов на ГЭ
@@ -74,6 +74,7 @@ async def get_weather_now(callback: CallbackQuery):
     await callback.answer()
 
 
+# Возвращаемся на главный экран с экрана погодных настроек
 @router.message(StateFilter(FSMWeather.weather_settings_state), F.text == 'Вернуться на главный экран')
 async def return_main_window(message: Message, state: FSMContext):
     await call_start(message, state)
