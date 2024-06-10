@@ -6,7 +6,7 @@ from services.geocoding import Geocoding
 from services.weather import WeatherOpenMeteo
 
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.filters import or_f, and_f, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, default_state
@@ -146,15 +146,3 @@ async def del_loc_process(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(text='Установлено место: ' + callback.data[13:], reply_markup=create_weather_settings_kb(callback.from_user.id))
     await callback.answer()
     await state.set_state(state=FSMWeather.weather_settings_state)
-
-
-# Выбор места для предоставления прогнозов по требованию
-@router.message(StateFilter(FSMWeather.weather_settings_state), F.text.split(": ")[0] == 'Дефолтное место или геопозиция')
-async def choose_default_location_or_geoposition(message: Message, state: FSMContext):
-    if user_db[message.from_user.id]['flag_default_location']:
-        user_db[message.from_user.id]['flag_default_location'] = False
-        text = 'Место'
-    else:
-        user_db[message.from_user.id]['flag_default_location'] = True
-        text = 'Геопозиция'
-    await message.answer(text=text, reply_markup=create_weather_settings_kb(message.from_user.id))

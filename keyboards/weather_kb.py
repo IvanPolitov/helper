@@ -30,18 +30,18 @@ def create_weather_settings_kb(user_id: int) -> ReplyKeyboardMarkup:
         text='Дефолтное место: ' + user_db[user_id]['default_location']
     )
 
-    if user_db[user_id]['flag_default_location']:
-        id_text = 'Геопозиция'
-    else:
-        id_text = 'Место'
-    flag_default_location = KeyboardButton(
-        text='Дефолтное место или геопозиция: ' + id_text
-    )
+    # if user_db[user_id]['flag_default_location']:
+    #     id_text = 'Геопозиция'
+    # else:
+    #     id_text = 'Место'
+    # flag_default_location = KeyboardButton(
+    #     text='Дефолтное место или геопозиция: ' + id_text
+    # )
     close = KeyboardButton(
         text='Вернуться на главный экран'
     )
     kb_builder.row(locations, daily_forecast, weekly_forecast,
-                   default_location, flag_default_location, close, width=1)
+                   default_location, close, width=1)
 
     keyboard: ReplyKeyboardMarkup = kb_builder.as_markup()
     return keyboard

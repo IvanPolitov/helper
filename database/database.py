@@ -8,6 +8,4 @@ user_dict_template = {
     'flag_daily_forecast': False,
     'flag_weekly_forecast': False,
     'default_location': 'Уфа',
-    # Здесь значение False указывает, что по умолчанию выбрана точка default_location, а True — что будет запрашиваться геопозиция
-    'flag_default_location': False,
 }
