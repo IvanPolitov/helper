@@ -5,7 +5,7 @@
 from services.geocoding import Geocoding
 from services.weather import WeatherOpenMeteo
 
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.filters import or_f, and_f, StateFilter
 from aiogram.fsm.context import FSMContext
@@ -141,8 +141,25 @@ async def choose_default_location(message: Message, state: FSMContext):
 
 # Обработка дефолтной точки
 @ router.callback_query(StateFilter(FSMWeather.choose_default_locations_state), F.data.split()[0] == 'def_location')
-async def del_loc_process(callback: CallbackQuery, state: FSMContext):
+async def def_loc_process(callback: CallbackQuery, state: FSMContext):
     user_db[callback.from_user.id]['default_location'] = callback.data[13:]
     await callback.message.answer(text='Установлено место: ' + callback.data[13:], reply_markup=create_weather_settings_kb(callback.from_user.id))
     await callback.answer()
     await state.set_state(state=FSMWeather.weather_settings_state)
+
+
+# Здесь будут функции для ежедневной отправки прогноза на день и на 7 дней
+async def daily_forecast(bot: Bot):
+    for user in user_db:
+        location = user_db[user]['default_location']
+        qq = weather.get_daily_forecast(
+            *user_db[user]['locations'][location])
+        await bot.send_message(chat_id=user, text=qq)
+
+
+async def weekly_forecast(bot: Bot):
+    for user in user_db:
+        location = user_db[user]['default_location']
+        qq = weather.get_weekly_forecast(
+            *user_db[user]['locations'][location])
+        await bot.send_message(chat_id=user, text=qq)
