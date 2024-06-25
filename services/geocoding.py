@@ -12,18 +12,20 @@ class Geocoding():
         res = da.geolocate(name="address", lat=latitude,
                            lon=longitude, count=1)
         da.close()
-        res = f'{res[0]['data']['city']}, {res[0]['data']['country']}'
+        print(res)
+        if res:
+            res = f'{res[0]['data']['city']}, {res[0]['data']['country']}'
         return res
 
     def find_coord(self, name: str) -> Tuple[int | float, int | float]:
         da = Dadata(token=self.token, secret=self.secret)
         res = da.clean(name='address', source=name,)
         da.close()
-        return res['result'], res['geo_lat'], res['geo_lon']
+        return res['result'], float(res['geo_lat']), float(res['geo_lon'])
 
 
 if __name__ == '__main__':
     geocode = Geocoding()
-    print(geocode.find_name(56.946946, 24.105941))
-    print(geocode.find_coord('УФА'))
-    print(geocode.find_coord('Москва'))
+    print(geocode.find_name(54.734856, 55.9577802))
+    # print(geocode.find_coord('УФА'))
+    # print(geocode.find_coord('Москва'))

@@ -26,8 +26,8 @@ async def my_scheduler(bot: Bot, scheduler: AsyncIOScheduler):
     scheduler.add_job(weather_settings_handlers.daily_forecast, 'cron', hour=7,
                       minute=0, args=(bot,))
     # задаём выполнение задачи по cron - гибкий способ задавать расписание.
-   # scheduler.add_job(weather_settings_handlers.weekly_forecast, 'cron', hour=7,
-    #                  minute=0, args=(bot,))
+    scheduler.add_job(weather_settings_handlers.weekly_forecast, 'cron', hour=7,
+                      minute=0, args=(bot,))
 
 
 async def main() -> None:

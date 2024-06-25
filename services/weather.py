@@ -1,6 +1,7 @@
 import requests
 from typing import Any
 import pprint
+import datetime
 
 
 class WeatherOpenMeteo:
@@ -79,12 +80,6 @@ class WeatherOpenMeteo:
                 'precipitation_probability',    # вероятность осадков %
                 'precipitation',                # кол-во осадков мм
             ),
-        })
-
-        self.params_d.update({
-            'daily': ('temperature_2m_max',
-                      'temperature_2m_min',
-                      ),
         })
 
     @staticmethod
@@ -176,39 +171,40 @@ class WeatherOpenMeteo:
         if not (self._is_coordinates(latitude, longitude)):
             return 'Not coordinates'
 
-        parameters = self.params_15m.copy()
+        parameters = self.params_h.copy()
         parameters['longitude'] = longitude
         parameters['latitude'] = latitude
-        parameters['forecast_minutely_15'] = 1
+        parameters['forecast_days'] = 7
+        parameters['daily'] = ('weather_code', )
         response = requests.get(self.URL, params=parameters).json()
 
-        temperature = response['minutely_15']['temperature_2m'][0]
-        apparent_temperature = response['minutely_15']['apparent_temperature'][0]
-        relative_humidity = response['minutely_15']['relative_humidity_2m'][0]
-        what_outside = self._weather_code[
-            response['minutely_15']['weather_code'][0]]
-        pressure = response['minutely_15']['pressure_msl'][0] * 0.75
-        wind_speed = response['minutely_15']['wind_speed_10m'][0]
-        wind_direction = next(self._get_wind_direction(
-            response['minutely_15']['wind_direction_10m'][0]))
-        # is_day = response['minutely_15']['is_day'][0]
-        precipitation_probability = response['minutely_15']['precipitation_probability'][0]
-        precipitation = response['minutely_15']['precipitation'][0]
+        r = response['hourly']
+        text = f'''Прогноз на неделю:\n'''
+        day = 0
+        while day != parameters['forecast_days']:
+            string = ''
 
-        text: str = f'''
-Погода сейчас: {what_outside}
-Температура: {temperature}
-По ощущениям: {apparent_temperature}
+            date = datetime.datetime.fromisoformat(
+                r['time'][day * 24])
+            date = f"{date.day}.{date.month}.{date.year}"
+            string += f"{date:>9}: "
 
-Влажность: {relative_humidity}%
-Ветер {wind_direction}, {wind_speed} м/с
-Давление: {pressure:.5} мм рт.ст.'''
-        if precipitation_probability > 0:
-            text += f'''\nВероятность осадков: {precipitation_probability}%'''
+            t = (min(r['temperature_2m'][day*24:(day+1)*24]
+                     ), max(r['temperature_2m'][day*24:(day+1)*24]))
+            string += f'{str(t[0]):>5}..{str(t[1]):>5}°C, '
+
+            p = sum(r['pressure_msl'][day*24:(day+1)*24]) / 24 * 0.75
+            string += f'{(p):0.1f}, '
+
+            string += f'{self._weather_code[response['daily']
+                                            ['weather_code'][day]]}\n'
+
+            text += string
+            day += 1
         return text
 
 
 if __name__ == '__main__':
     w = WeatherOpenMeteo()
-    print(w.get_daily_forecast(54.7431, 55.9678))
-    # print(w.get_weekly_forecast(54.7431, 55.9678))
+    # print(w.get_daily_forecast(54.7431, 55.9678))
+    print(w.get_weekly_forecast(54.7431, 55.9678))

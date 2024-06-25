@@ -107,7 +107,7 @@ async def add_location_list_by_name(message: Message, state: FSMContext):
     await state.set_state(state=FSMWeather.choose_locations_state)
 
 
-# Включить прогноз на день по часам в 8:00
+# Включить прогноз на день по часам в 7:00
 @ router.message(StateFilter(FSMWeather.weather_settings_state), F.text.split(": ")[0] == 'Прогноз на день')
 async def forecast_daily_active(message: Message, state: FSMContext):
     if user_db[message.from_user.id]['flag_daily_forecast']:
@@ -119,7 +119,7 @@ async def forecast_daily_active(message: Message, state: FSMContext):
     await message.answer(text=text, reply_markup=create_weather_settings_kb(message.from_user.id))
 
 
-# Включить прогноз на неделю по дням в 8:00
+# Включить прогноз на неделю по дням в 7:00
 @ router.message(StateFilter(FSMWeather.weather_settings_state), F.text.split(": ")[0] == 'Прогноз на неделю')
 async def forecast_weekly_active(message: Message, state: FSMContext):
     if user_db[message.from_user.id]['flag_weekly_forecast']:
@@ -151,15 +151,17 @@ async def def_loc_process(callback: CallbackQuery, state: FSMContext):
 # Здесь будут функции для ежедневной отправки прогноза на день и на 7 дней
 async def daily_forecast(bot: Bot):
     for user in user_db:
-        location = user_db[user]['default_location']
-        qq = weather.get_daily_forecast(
-            *user_db[user]['locations'][location])
-        await bot.send_message(chat_id=user, text=qq)
+        if user_db[user]['flag_daily_forecast']:
+            location = user_db[user]['default_location']
+            qq = weather.get_daily_forecast(
+                *user_db[user]['locations'][location])
+            await bot.send_message(chat_id=user, text=qq)
 
 
 async def weekly_forecast(bot: Bot):
     for user in user_db:
-        location = user_db[user]['default_location']
-        qq = weather.get_weekly_forecast(
-            *user_db[user]['locations'][location])
-        await bot.send_message(chat_id=user, text=qq)
+        if user_db[user]['flag_weekly_forecast']:
+            location = user_db[user]['default_location']
+            qq = weather.get_weekly_forecast(
+                *user_db[user]['locations'][location])
+            await bot.send_message(chat_id=user, text=qq)

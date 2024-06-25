@@ -60,6 +60,12 @@ async def get_weather(message: Message, state: FSMContext):
     await message.answer(text='Погода', reply_markup=create_choose_forecast_kb())
 
 
+# Возвращаемся на главный экран с экрана погодных настроек
+@router.message(StateFilter(FSMWeather.weather_settings_state), F.text == 'Вернуться на главный экран')
+async def return_main_window(message: Message, state: FSMContext):
+    await call_start(message, state)
+
+
 # Запрос погоды в настоящее время в дефолтном месте
 @router.callback_query(F.data == 'weather_now')
 async def get_weather_now(callback: CallbackQuery):
@@ -74,7 +80,29 @@ async def get_weather_now(callback: CallbackQuery):
     await callback.answer()
 
 
-# Возвращаемся на главный экран с экрана погодных настроек
-@router.message(StateFilter(FSMWeather.weather_settings_state), F.text == 'Вернуться на главный экран')
-async def return_main_window(message: Message, state: FSMContext):
-    await call_start(message, state)
+# Запрос прогноза на день в дефолтном месте
+@router.callback_query(F.data == 'daily_forecast')
+async def get_weather_daily(callback: CallbackQuery):
+    location = user_db[callback.from_user.id]['default_location']
+    qq = weather.get_daily_forecast(
+        *user_db[callback.from_user.id]['locations'][location])
+
+    await callback.message.edit_text(
+        text=qq,
+        reply_markup=callback.message.reply_markup
+    )
+    await callback.answer()
+
+
+# Запрос прогноза на неделю в дефолтном месте
+@router.callback_query(F.data == 'weekly_forecast')
+async def get_weather_weekly(callback: CallbackQuery):
+    location = user_db[callback.from_user.id]['default_location']
+    qq = weather.get_weekly_forecast(
+        *user_db[callback.from_user.id]['locations'][location])
+
+    await callback.message.edit_text(
+        text=qq,
+        reply_markup=callback.message.reply_markup
+    )
+    await callback.answer()
