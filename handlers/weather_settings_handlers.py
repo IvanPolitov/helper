@@ -153,15 +153,21 @@ async def daily_forecast(bot: Bot):
     for user in user_db:
         if user_db[user]['flag_daily_forecast']:
             location = user_db[user]['default_location']
-            qq = weather.get_daily_forecast(
-                *user_db[user]['locations'][location])
-            await bot.send_message(chat_id=user, text=qq)
+            try:
+                qq = weather.get_daily_forecast(
+                    *user_db[user]['locations'][location])
+                await bot.send_message(chat_id=user, text=qq)
+            except KeyError:
+                await bot.send_message(chat_id=user, text='Неправильное место по дефолту')
 
 
 async def weekly_forecast(bot: Bot):
     for user in user_db:
         if user_db[user]['flag_weekly_forecast']:
             location = user_db[user]['default_location']
-            qq = weather.get_weekly_forecast(
-                *user_db[user]['locations'][location])
-            await bot.send_message(chat_id=user, text=qq)
+            try:
+                qq = weather.get_weekly_forecast(
+                    *user_db[user]['locations'][location])
+                await bot.send_message(chat_id=user, text=qq)
+            except KeyError:
+                await bot.send_message(chat_id=user, text='Неправильное место по дефолту')

@@ -70,39 +70,60 @@ async def return_main_window(message: Message, state: FSMContext):
 @router.callback_query(F.data == 'weather_now')
 async def get_weather_now(callback: CallbackQuery):
     location = user_db[callback.from_user.id]['default_location']
-    qq = weather.get_current_weather(
-        *user_db[callback.from_user.id]['locations'][location])
+    try:
+        qq = weather.get_current_weather(
+            *user_db[callback.from_user.id]['locations'][location])
 
-    await callback.message.edit_text(
-        text=qq,
-        reply_markup=callback.message.reply_markup
-    )
-    await callback.answer()
+        await callback.message.edit_text(
+            text=qq,
+            reply_markup=callback.message.reply_markup
+        )
+        await callback.answer()
+    except KeyError:
+        await callback.message.edit_text(
+            text='Смените дефолтное место',
+            reply_markup=callback.message.reply_markup
+        )
+        await callback.answer()
 
 
 # Запрос прогноза на день в дефолтном месте
 @router.callback_query(F.data == 'daily_forecast')
 async def get_weather_daily(callback: CallbackQuery):
     location = user_db[callback.from_user.id]['default_location']
-    qq = weather.get_daily_forecast(
-        *user_db[callback.from_user.id]['locations'][location])
+    try:
+        qq = weather.get_daily_forecast(
+            *user_db[callback.from_user.id]['locations'][location])
 
-    await callback.message.edit_text(
-        text=qq,
-        reply_markup=callback.message.reply_markup
-    )
-    await callback.answer()
+        await callback.message.edit_text(
+            text=qq,
+            reply_markup=callback.message.reply_markup
+        )
+        await callback.answer()
+    except KeyError:
+        await callback.message.edit_text(
+            text='Смените дефолтное место',
+            reply_markup=callback.message.reply_markup
+        )
+        await callback.answer()
 
 
 # Запрос прогноза на неделю в дефолтном месте
 @router.callback_query(F.data == 'weekly_forecast')
 async def get_weather_weekly(callback: CallbackQuery):
     location = user_db[callback.from_user.id]['default_location']
-    qq = weather.get_weekly_forecast(
-        *user_db[callback.from_user.id]['locations'][location])
+    try:
+        qq = weather.get_weekly_forecast(
+            *user_db[callback.from_user.id]['locations'][location])
 
-    await callback.message.edit_text(
-        text=qq,
-        reply_markup=callback.message.reply_markup
-    )
-    await callback.answer()
+        await callback.message.edit_text(
+            text=qq,
+            reply_markup=callback.message.reply_markup
+        )
+        await callback.answer()
+    except KeyError:
+        await callback.message.edit_text(
+            text='Смените дефолтное место',
+            reply_markup=callback.message.reply_markup
+        )
+        await callback.answer()
