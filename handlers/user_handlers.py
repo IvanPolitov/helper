@@ -61,8 +61,14 @@ async def get_weather(message: Message, state: FSMContext):
 
 
 # Возвращаемся на главный экран с экрана погодных настроек
-@router.message(StateFilter(FSMWeather.weather_settings_state), F.text == 'Вернуться на главный экран')
+@router.message(StateFilter(FSMWeather.weather_settings_state))
 async def return_main_window(message: Message, state: FSMContext):
+    await call_start(message, state)
+
+
+# Отмена для "выбора дефолтного места"
+@ router.message(StateFilter(FSMWeather.choose_default_locations_state), F.text == 'Вернуться на главный экран')
+async def return_main_window2(message: Message, state: FSMContext):
     await call_start(message, state)
 
 

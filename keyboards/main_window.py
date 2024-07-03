@@ -1,6 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from database.database import user_db
 
 
 def create_main_window_kb(user_id: int) -> ReplyKeyboardMarkup:

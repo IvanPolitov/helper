@@ -8,6 +8,7 @@ from handlers import other_handlers, user_handlers, weather_settings_handlers
 from keyboards.main_menu import set_main_menu
 from aiogram.fsm.storage.memory import MemoryStorage
 from database.database import user_db
+from services.db_module import SQL
 
 
 class SchedulerMiddleware(BaseMiddleware):
