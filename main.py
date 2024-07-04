@@ -7,8 +7,7 @@ from aiogram import BaseMiddleware
 from handlers import other_handlers, user_handlers, weather_settings_handlers
 from keyboards.main_menu import set_main_menu
 from aiogram.fsm.storage.memory import MemoryStorage
-from database.database import user_db
-from services.db_module import SQL
+from database.db_module import db
 
 
 class SchedulerMiddleware(BaseMiddleware):
@@ -23,7 +22,6 @@ class SchedulerMiddleware(BaseMiddleware):
 
 
 async def my_scheduler(bot: Bot, scheduler: AsyncIOScheduler):
-    # задаём выполнение задачи в равные промежутки времени
     scheduler.add_job(weather_settings_handlers.daily_forecast, 'cron', hour=7,
                       minute=0, args=(bot,))
     # задаём выполнение задачи по cron - гибкий способ задавать расписание.

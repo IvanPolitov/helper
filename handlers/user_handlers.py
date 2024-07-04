@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from lexicon.lexicon_ru import LEXICON_COMMANDS
@@ -8,11 +6,11 @@ from keyboards.weather_kb import create_weather_settings_kb, create_choose_forec
 from keyboards.main_window import create_main_window_kb
 from services.weather import WeatherOpenMeteo
 from services.geocoding import Geocoding
-from database.database import user_db, user_dict_template
 from states.states import FSMWeather
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-
+from database.db_module import db
+import logging
 
 router = Router()
 weather = WeatherOpenMeteo()
@@ -29,9 +27,12 @@ async def call_help(message: Message):
 # говорит доброе утро. Ну и создает главный экран
 @router.message(CommandStart())
 async def call_start(message: Message, state: FSMContext):
-    if message.from_user.id not in user_db:
-        user_db[message.from_user.id] = deepcopy(user_dict_template)
-        await message.answer(text=f'Здравствуйте, {message.from_user.first_name}. {LEXICON_COMMANDS['/start']}', reply_markup=create_main_window_kb(message.from_user.id))
+    user = db.get_user(message.from_user.id)
+    if not user:
+        db.create_user(message.from_user.id)
+        logging.info(f'Пользователь добавлен {message.from_user.id}')
+        # user_db[message.from_user.id] = deepcopy(user_dict_template)
+        await message.answer(text=f'Добро пожаловать, {message.from_user.first_name}. Новый пользователь добавлен. {LEXICON_COMMANDS['/start']}', reply_markup=create_main_window_kb(message.from_user.id))
     else:
         await message.answer(text=f'Добрый день, {message.from_user.first_name}.', reply_markup=create_main_window_kb(message.from_user.id))
     await state.set_state(state=default_state)
@@ -50,13 +51,13 @@ async def change_weather_settings(message: Message, state: FSMContext):
 
 # Прогрузка главного экрана
 @router.message(StateFilter(default_state), F.text == 'Главный экран')
-async def main_window(message: Message, state: FSMContext):
+async def main_window(message: Message):
     await message.answer(text='Главный экран', reply_markup=create_main_window_kb(message.from_user.id))
 
 
 # Взаимодействие с меню прогнозов на ГЭ
 @router.message(StateFilter(default_state), F.text == 'Погода')
-async def get_weather(message: Message, state: FSMContext):
+async def get_weather(message: Message):
     await message.answer(text='Погода', reply_markup=create_choose_forecast_kb())
 
 
@@ -75,10 +76,13 @@ async def return_main_window2(message: Message, state: FSMContext):
 # Запрос погоды в настоящее время в дефолтном месте
 @router.callback_query(F.data == 'weather_now')
 async def get_weather_now(callback: CallbackQuery):
-    location = user_db[callback.from_user.id]['default_location']
+    db_location = db.get_user_default_location(callback.from_user.id)
+    # location = user_db[callback.from_user.id]['default_location']
     try:
         qq = weather.get_current_weather(
-            *user_db[callback.from_user.id]['locations'][location])
+            # сюда пихается широта и долгота, распаковываем кортеж, который берем из словаря (до перехода в бд)
+            # *user_db[callback.from_user.id]['locations'][location])
+            *db_location[2:4])
 
         await callback.message.edit_text(
             text=qq,
@@ -96,10 +100,12 @@ async def get_weather_now(callback: CallbackQuery):
 # Запрос прогноза на день в дефолтном месте
 @router.callback_query(F.data == 'daily_forecast')
 async def get_weather_daily(callback: CallbackQuery):
-    location = user_db[callback.from_user.id]['default_location']
+    db_location = db.get_user_default_location(callback.from_user.id)
+    # location = user_db[callback.from_user.id]['default_location']
     try:
         qq = weather.get_daily_forecast(
-            *user_db[callback.from_user.id]['locations'][location])
+            # *user_db[callback.from_user.id]['locations'][location])
+            *db_location[2:4])
 
         await callback.message.edit_text(
             text=qq,
@@ -117,10 +123,12 @@ async def get_weather_daily(callback: CallbackQuery):
 # Запрос прогноза на неделю в дефолтном месте
 @router.callback_query(F.data == 'weekly_forecast')
 async def get_weather_weekly(callback: CallbackQuery):
-    location = user_db[callback.from_user.id]['default_location']
+    db_location = db.get_user_default_location(callback.from_user.id)
+    # location = user_db[callback.from_user.id]['default_location']
     try:
         qq = weather.get_weekly_forecast(
-            *user_db[callback.from_user.id]['locations'][location])
+            # *user_db[callback.from_user.id]['locations'][location])
+            *db_location[2:4])
 
         await callback.message.edit_text(
             text=qq,
