@@ -77,19 +77,16 @@ async def return_main_window2(message: Message, state: FSMContext):
 @router.callback_query(F.data == 'weather_now')
 async def get_weather_now(callback: CallbackQuery):
     db_location = db.get_user_default_location(callback.from_user.id)
-    # location = user_db[callback.from_user.id]['default_location']
     try:
         qq = weather.get_current_weather(
             # сюда пихается широта и долгота, распаковываем кортеж, который берем из словаря (до перехода в бд)
-            # *user_db[callback.from_user.id]['locations'][location])
             *db_location[2:4])
-
         await callback.message.edit_text(
             text=qq,
             reply_markup=callback.message.reply_markup
         )
         await callback.answer()
-    except KeyError:
+    except TypeError:
         await callback.message.edit_text(
             text='Смените дефолтное место',
             reply_markup=callback.message.reply_markup
@@ -101,10 +98,8 @@ async def get_weather_now(callback: CallbackQuery):
 @router.callback_query(F.data == 'daily_forecast')
 async def get_weather_daily(callback: CallbackQuery):
     db_location = db.get_user_default_location(callback.from_user.id)
-    # location = user_db[callback.from_user.id]['default_location']
     try:
         qq = weather.get_daily_forecast(
-            # *user_db[callback.from_user.id]['locations'][location])
             *db_location[2:4])
 
         await callback.message.edit_text(
@@ -112,7 +107,7 @@ async def get_weather_daily(callback: CallbackQuery):
             reply_markup=callback.message.reply_markup
         )
         await callback.answer()
-    except KeyError:
+    except TypeError:
         await callback.message.edit_text(
             text='Смените дефолтное место',
             reply_markup=callback.message.reply_markup
@@ -124,10 +119,8 @@ async def get_weather_daily(callback: CallbackQuery):
 @router.callback_query(F.data == 'weekly_forecast')
 async def get_weather_weekly(callback: CallbackQuery):
     db_location = db.get_user_default_location(callback.from_user.id)
-    # location = user_db[callback.from_user.id]['default_location']
     try:
         qq = weather.get_weekly_forecast(
-            # *user_db[callback.from_user.id]['locations'][location])
             *db_location[2:4])
 
         await callback.message.edit_text(
@@ -135,7 +128,7 @@ async def get_weather_weekly(callback: CallbackQuery):
             reply_markup=callback.message.reply_markup
         )
         await callback.answer()
-    except KeyError:
+    except TypeError:
         await callback.message.edit_text(
             text='Смените дефолтное место',
             reply_markup=callback.message.reply_markup

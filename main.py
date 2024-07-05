@@ -23,10 +23,10 @@ class SchedulerMiddleware(BaseMiddleware):
 
 async def my_scheduler(bot: Bot, scheduler: AsyncIOScheduler):
     scheduler.add_job(weather_settings_handlers.daily_forecast, 'cron', hour=7,
-                      minute=0, args=(bot,))
+                      minute=0, args=(bot,), misfire_grace_time=10)
     # задаём выполнение задачи по cron - гибкий способ задавать расписание.
     scheduler.add_job(weather_settings_handlers.weekly_forecast, 'cron', hour=7,
-                      minute=0, args=(bot,))
+                      minute=0, args=(bot,), misfire_grace_time=10)
 
 
 async def main() -> None:

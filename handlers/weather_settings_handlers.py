@@ -6,10 +6,9 @@ from services.geocoding import Geocoding
 from services.weather import WeatherOpenMeteo
 
 from aiogram import Router, F, Bot
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
-from aiogram.filters import or_f, and_f, StateFilter
+from aiogram.types import Message, CallbackQuery
+from aiogram.filters import and_f, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, default_state
 
 from keyboards.weather_kb import choose_locations_kb, create_location_kb, cancel_kb, create_weather_settings_kb, cancel_kb, create_choose_default_location_kb
 
@@ -35,10 +34,7 @@ async def location_list(message: Message, state: FSMContext):
 # Просмотр списка
 @ router.message(StateFilter(FSMWeather.choose_locations_state), F.text == 'Посмотреть')
 async def look_list(message: Message):
-    # loc, lat, long = db.get_all_locations_of_user(message.from_user.id)
-    # user = user_db[message.from_user.id]['locations']
     locations = db.get_all_locations_of_user(message.from_user.id)
-    print(locations)
     text = 'Список точек интереса:\n'
     for user_loc in locations:
         # print(user_loc)
@@ -175,7 +171,7 @@ async def daily_forecast(bot: Bot):
                 qq = weather.get_daily_forecast(
                     *location)
                 await bot.send_message(chat_id=user[0], text=qq)
-            except KeyError:
+            except TypeError:
                 await bot.send_message(chat_id=user[0], text='Неправильное место по дефолту')
 
 
@@ -188,5 +184,5 @@ async def weekly_forecast(bot: Bot):
                 qq = weather.get_weekly_forecast(
                     *location)
                 await bot.send_message(chat_id=user[0], text=qq)
-            except KeyError:
+            except TypeError:
                 await bot.send_message(chat_id=user[0], text='Неправильное место по дефолту')
